@@ -1,0 +1,30 @@
+{
+  "name": "property-proxy",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hayond/property-proxy.git"
+  },
+  "author": "jane.gao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hayond/property-proxy/issues"
+  },
+  "homepage": "https://github.com/hayond/property-proxy#readme",
+  "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.18.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}

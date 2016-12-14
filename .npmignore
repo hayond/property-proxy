@@ -1,0 +1,11 @@
+# system
+.DS_Store
+
+# npm
+node_modules/
+.npmignore
+
+# npm-package
+test/
+.gitignore
+
