@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title></title>
+</head>
+<body>
+
+	<script src="../dist/property-proxy-standalone.js"></script>
+	<script>
+		let testObject = {
+			a: 1,
+			b: {
+				c: [1,2,3,4,5]
+			}
+		}
+		PropertyProxy.define(testObject, 'b.c.2', {
+			get(value) {
+				console.log(`${value}---get`)
+			},
+			set(value){
+				this.c = '23234234'
+			}
+		})
+		PropertyProxy.set(testObject, 'b.c.2', 'hahaha')
+		let v = PropertyProxy.get(testObject, 'b.c.2')
+
+		window.testObject = testObject
+
+	</script>
+</body>
+</html>

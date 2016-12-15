@@ -1,4 +1,12 @@
 
+export function watchSet(obj, path, callback) {
+
+}
+
+export function watchInvoke(obj, path, callback) {
+	
+}
+
 export function define(obj, path, descriptor) {
 		return typeof path === 'object' && !Array.isArray(path) ? defineProperties(obj, path) : defineProperty(obj, path, descriptor)
 }
@@ -15,10 +23,9 @@ export function defineProperty(obj, path, descriptor) {
 	}
 	set(obj, path, null, true)
 
-	let parentObj = get(obj, path.splice(0, -1))
+	let parentObj = get(obj, path.slice(0, -1))
 	let propertyName = path[path.length - 1]
 	if (descriptor.invoke) {
-		let invokeMethod = descriptor.invoke
 		descriptor.value && (parentObj[propertyName] = descriptor.value)
 		descriptor.get = function (originMethod) {
 			return function (...args) {
@@ -26,9 +33,6 @@ export function defineProperty(obj, path, descriptor) {
 				return originMethod(...args)
 			}
 		}
-	}
-	if (descriptor.get) {
-		descriptor.get = function () { return descriptor.get(parentObj[propertyName]) }
 	}
 
 	Object.defineProperty(parentObj, propertyName, descriptor)
