@@ -15,13 +15,8 @@
 				c: [1,2,3,4,5]
 			}
 		}
-		PropertyProxy.define(testObject, 'b.c.2', {
-			get(value) {
-				console.log(`${value}---get`)
-			},
-			set(value){
-				this.c = '23234234'
-			}
+		PropertyProxy.watchSet(testObject, 'b.c.2', function (value) {
+			console.log(`${value}---set`)
 		})
 		PropertyProxy.set(testObject, 'b.c.2', 'hahaha')
 		let v = PropertyProxy.get(testObject, 'b.c.2')

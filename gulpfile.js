@@ -9,7 +9,7 @@ const entry = {
 }
 const distDir = 'dist'
 
-gulp.task('default', () => {
+gulp.task('build', () => {
     del.sync([distDir])
 
     webpack({
@@ -25,13 +25,12 @@ gulp.task('default', () => {
     				exclude: /node_modules/,
 		            loader: 'babel',
 		            query: {
-		                presets: ['es2015'],
-		                plugins: [
-		                    'transform-runtime',
-		                    'transform-class-properties'
-		                ]
-
-		            }
+                        "presets": ["es2015"],
+                        "plugins": [
+                        'transform-runtime',
+                        'transform-class-properties'
+                        ]
+                    }
     			}
     		]
     	}
