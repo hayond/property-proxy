@@ -1,14 +1,17 @@
 {
   "name": "property-proxy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "build": "babel ./src/property-proxy.js --out-file ./dist/property-proxy.js",
+    "standalone": "gulp standalone",
     "test": "babel-node ./test/test.js",
-    "watchtest": "nodemon ./test/test.js --exec babel-node"
+    "watchtest": "nodemon ./test/test.js --exec babel-node",
+    "debug": "node --inspect --debug-brk ./test/test.js"
   },
   "repository": {
     "type": "git",

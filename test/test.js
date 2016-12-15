@@ -1,5 +1,5 @@
 
-import PropertyProxy from '../src/property-proxy'
+const PropertyProxy = require('../index')
 
 let testObject = {
 	a: 1,

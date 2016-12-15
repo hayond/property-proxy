@@ -3,17 +3,17 @@ const del = require('del')
 const babel = require('gulp-babel')
 const webpack = require('webpack')
 
-const entry = {
-	'property-proxy': './entry/property-proxy.js',
-	'property-proxy-standalone': './entry/property-proxy-standalone.js'
-}
 const distDir = 'dist'
 
-gulp.task('build', () => {
-    del.sync([distDir])
+gulp.task('clean', () => {
+    del([distDir])
+})
+
+gulp.task('standalone', () => {
+    // del.sync([distDir])
 
     webpack({
-    	entry: entry,
+    	entry: { 'property-proxy-standalone': './src/property-proxy-standalone.js' },
     	output: {
     		filename: '[name].js',
     		path: distDir
@@ -27,13 +27,16 @@ gulp.task('build', () => {
 		            query: {
                         "presets": ["es2015"],
                         "plugins": [
-                        'transform-runtime',
-                        'transform-class-properties'
+                        // 'transform-runtime',
+                        // 'transform-class-properties'
                         ]
                     }
     			}
     		]
-    	}
+    	},
+        plugins: [
+            new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+        ]
     }, (err, stats) => {
         if (err) throw err
     })

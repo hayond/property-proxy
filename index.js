@@ -1,2 +1,2 @@
 
-module.exports = require('./dist/property-proxy').default
+module.exports = require('./dist/property-proxy')
