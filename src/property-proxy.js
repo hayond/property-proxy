@@ -2,7 +2,7 @@
 export function watchSet(obj, path, callback) {
 	defineProperty(obj, path, {
 		set(value, oldValue) {
-			callback(value, oldValue)
+			callback.call(this, value, oldValue)
 			return
 		}
 	})
@@ -11,7 +11,7 @@ export function watchSet(obj, path, callback) {
 export function watchInvoke(obj, path, callback) {
 	defineProperty(obj, path, {
 		invoke(...args) {
-			callback(...args)
+			callback.call(this, ...args)
 		}
 	})
 }
@@ -40,7 +40,7 @@ export function defineProperty(obj, path, descriptor) {
 
 	let delegateGet = descriptor.get
 	let delegateSet = descriptor.set
-	let invokeCallBack = descriptor.invoke 
+	let invokeCallback = descriptor.invoke 
 	let delegateValue = descriptor.value || parentObj[propertyName]
 	
 
@@ -49,13 +49,14 @@ export function defineProperty(obj, path, descriptor) {
 	descriptor.get = function () {
 		let getValue = parentObj[proxyMapName][propertyName]
 		if (delegateGet) {
-			let newValue = delegateGet(getValue)
+			let newValue = delegateGet.call(this, getValue)
 			newValue !== undefined && (getValue = newValue)
 		}
-		if (invokeCallBack && typeof getValue === 'function') {
+		if (invokeCallback && typeof getValue === 'function') {
+			let tempValue = getValue
 			getValue = function(...args) {
-				invokeCallBack(...args)
-				return getValue(...args)
+				let callbackResult = invokeCallback.apply(this, args)
+				return callbackResult === false ? null : tempValue.apply(this, args)
 			}
 		}
 		return getValue
@@ -64,7 +65,7 @@ export function defineProperty(obj, path, descriptor) {
 		let oldValue = parentObj[proxyMapName][propertyName]
 		let setValue = value
 		if (delegateSet) {
-			let newValue = delegateSet(setValue, oldValue)
+			let newValue = delegateSet.call(this, setValue, oldValue)
 			newValue !== undefined && (setValue = newValue)
 		}
 		parentObj[proxyMapName][propertyName] = setValue

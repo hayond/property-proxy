@@ -4,16 +4,21 @@ const babel = require('gulp-babel')
 const webpack = require('webpack')
 
 const distDir = 'dist'
+const babelOptions = {
+    presets: ['es2015'],
+    // plugins: ['transform-class-properties', 'transform-runtime']
+}
 
 gulp.task('clean', () => {
     del([distDir])
 })
 
-gulp.task('standalone', () => {
-    // del.sync([distDir])
+gulp.task('build', () => {
+
+   gulp.src('src/**/*.js').pipe(babel(babelOptions)).pipe(gulp.dest(distDir))
 
     webpack({
-    	entry: { 'property-proxy-standalone': './src/property-proxy-standalone.js' },
+    	entry: { 'property-proxy-standalone': './test/property-proxy-standalone.js' },
     	output: {
     		filename: '[name].js',
     		path: distDir
@@ -24,18 +29,12 @@ gulp.task('standalone', () => {
     				test: /\.js$/,
     				exclude: /node_modules/,
 		            loader: 'babel',
-		            query: {
-                        "presets": ["es2015"],
-                        "plugins": [
-                        // 'transform-runtime',
-                        // 'transform-class-properties'
-                        ]
-                    }
+		            query: babelOptions
     			}
     		]
     	},
         plugins: [
-            new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+            // new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
         ]
     }, (err, stats) => {
         if (err) throw err

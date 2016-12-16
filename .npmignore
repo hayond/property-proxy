@@ -8,6 +8,5 @@ node_modules/
 # npm-package
 test/
 .gitignore
-.babelrc
 gulpfile.js
 
