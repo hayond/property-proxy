@@ -1,9 +1,9 @@
-## property-proxy
+property-proxy
+===========
+
 Proxy and Monitor deep properties 
 
 ## Install
-
-### Node.js
 ```
 npm install property-proxy --save
 ```
@@ -42,6 +42,7 @@ o.a.b.c
 o.a.b.c = 666
 // set--666--instead-of--37
 ```
+
 ### defineProperties (obj, props)
 ```javascript
 propertyProxy.defineProperties(o, {
@@ -50,6 +51,7 @@ propertyProxy.defineProperties(o, {
 	...
 })
 ```
+
 ### watchSet (obj, path, callback)
 Monitor property value change
 
@@ -62,6 +64,7 @@ propertyProxy.watchSet(o, 'a.b.c', function (value, oldValue) {
 o.a.b.c = 'hello es!'
 // set--hello es!--instead-of--666
 ```
+
 ### watchInvoke (obj, path, callback)
 Monitor method invoke
 
@@ -73,12 +76,14 @@ propertyProxy.watchInvoke(o, 'a.b.d.l.push', function (value) {
 propertyProxy.get(o, 'a.b.d.l').push(8)
 // push--8--into--1,2,3,4,5,6,7
 ```
+
 ### get (obj, path, defaultValue)
 ```javascript
 propertyProxy.get(o, 'a.b.d.l')
 console.log(o.a.b.d.l.toString())
 // 1,2,3,4,5,6,7,8
 ```
+
 ### set (obj, path, value, doNotReplace)
 ```javascript
 propertyProxy.set(o, 'a.b.d.l', [6,6,6])
