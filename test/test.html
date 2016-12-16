@@ -7,22 +7,57 @@
 </head>
 <body>
 
+	<h2>hello js!</h2>
+
 	<script src="../dist/property-proxy-standalone.js"></script>
 	<script>
-		let testObject = {
-			a: 1,
-			b: {
-				c: [1,2,3,4,5]
+		var o = {}
+		propertyProxy.defineProperty(o, 'a.b.c', {
+			value: 37,
+			writable: true,
+			enumerable: true,
+			configurable: true
+		})
+		console.log(o.a.b.c)
+		// 37
+
+		propertyProxy.defineProperty(o, 'a.b.c', {
+			get: function (value) {
+				console.log('get--' + value)
+				return value
+			},
+			set: function (value, oldValue) {
+				console.log('set--' + value + '--instead-of--' + oldValue)
+				return value
 			}
-		}
-		PropertyProxy.watchSet(testObject, 'b.c.2', function (value) {
-			console.log(`${value}---set`, this.toString())
 		})
-		PropertyProxy.watchInvoke(testObject, 'b.c.push', function (value) {
-			console.log(`${value}---push`, this.toString())
+		o.a.b.c
+		// get--37
+		o.a.b.c = 666
+		// set--666--instead-of--37
+
+		propertyProxy.watchSet(o, 'a.b.c', function (value, oldValue) {
+			console.log('set--' + value + '--instead-of--' + oldValue)
+			// something else, like DOM operator
+			document.querySelector('H2').innerHTML = value
 		})
-		PropertyProxy.set(testObject, 'b.c.2', 'hahaha')
-		PropertyProxy.get(testObject, 'b.c').push('666')
+		o.a.b.c = 'hello es!'
+		// set--hello es!--instead-of--666
+
+		propertyProxy.set(o, 'a.b.d.l', [1,2,3,4,5,6,7])
+		propertyProxy.watchInvoke(o, 'a.b.d.l.push', function (value) {
+			console.log('push--' + value + '--into--' + this.toString())
+		})
+		propertyProxy.get(o, 'a.b.d.l').push(8)
+		// push--8--into--1,2,3,4,5,6,7
+
+		propertyProxy.get(o, 'a.b.d.l')
+		console.log(o.a.b.d.l.toString())
+		// 1,2,3,4,5,6,7,8
+
+		propertyProxy.set(o, 'a.b.d.l', [6,6,6])
+		console.log(o.a.b.d.l.toString())
+		// 6,6,6
 	</script>
 </body>
 </html>

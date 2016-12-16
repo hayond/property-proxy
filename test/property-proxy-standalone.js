@@ -1,4 +1,4 @@
 
-import PropertyProxy from '../src/property-proxy'
+import propertyProxy from '../src/property-proxy'
 
-window.PropertyProxy = PropertyProxy
+window.propertyProxy = propertyProxy

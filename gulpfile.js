@@ -34,7 +34,7 @@ gulp.task('build', () => {
     		]
     	},
         plugins: [
-            // new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+            new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
         ]
     }, (err, stats) => {
         if (err) throw err

@@ -1,5 +1,5 @@
 
-export function watchSet(obj, path, callback) {
+export function watchSet (obj, path, callback) {
 	defineProperty(obj, path, {
 		set(value, oldValue) {
 			callback.call(this, value, oldValue)
@@ -8,7 +8,7 @@ export function watchSet(obj, path, callback) {
 	})
 }
 
-export function watchInvoke(obj, path, callback) {
+export function watchInvoke (obj, path, callback) {
 	defineProperty(obj, path, {
 		invoke(...args) {
 			callback.call(this, ...args)
@@ -16,11 +16,11 @@ export function watchInvoke(obj, path, callback) {
 	})
 }
 
-export function d(obj, path, descriptor) {
+export function d (obj, path, descriptor) {
 		return typeof path === 'object' && !Array.isArray(path) ? defineProperties(obj, path) : defineProperty(obj, path, descriptor)
 }
 
-export function defineProperty(obj, path, descriptor) {
+export function defineProperty (obj, path, descriptor) {
 	if (typeof path === 'number') {
 		path = [path]
 	}
@@ -41,21 +41,33 @@ export function defineProperty(obj, path, descriptor) {
 	let delegateGet = descriptor.get
 	let delegateSet = descriptor.set
 	let invokeCallback = descriptor.invoke 
-	let delegateValue = descriptor.value || parentObj[propertyName]
-	
+	let delegateValue = descriptor.value
+	let delegateWritable = descriptor.writable ||
+		(Object.hasOwnProperty(parentObj, propertyName) ? Object.getOwnPropertyDescriptor(parentObj, propertyName).writable : true)
+	let proxyInfo = {
+		rootObject: obj, 
+		parentObject: parentObj, 
+		propertyName: propertyName,
+		path: path,
+		descriptor: descriptor
+	}
 
-	parentObj[proxyMapName][propertyName] = delegateValue
-	parentObj[propertyName] = null
+	if (parentObj[proxyMapName][propertyName] === undefined) {
+		parentObj[proxyMapName][propertyName] = delegateValue || parentObj[propertyName]
+		parentObj[propertyName] = null
+	} else if (delegateValue) {
+		parentObj[proxyMapName][propertyName] = delegateValue
+	}
 	descriptor.get = function () {
 		let getValue = parentObj[proxyMapName][propertyName]
 		if (delegateGet) {
-			let newValue = delegateGet.call(this, getValue)
+			let newValue = delegateGet.call(this, getValue, proxyInfo)
 			newValue !== undefined && (getValue = newValue)
 		}
 		if (invokeCallback && typeof getValue === 'function') {
 			let tempValue = getValue
 			getValue = function(...args) {
-				let callbackResult = invokeCallback.apply(this, args)
+				let callbackResult = invokeCallback.call(this, ...args, proxyInfo)
 				return callbackResult === false ? null : tempValue.apply(this, args)
 			}
 		}
@@ -65,22 +77,27 @@ export function defineProperty(obj, path, descriptor) {
 		let oldValue = parentObj[proxyMapName][propertyName]
 		let setValue = value
 		if (delegateSet) {
-			let newValue = delegateSet.call(this, setValue, oldValue)
+			let newValue = delegateSet.call(this, setValue, oldValue, proxyInfo)
 			newValue !== undefined && (setValue = newValue)
+		} else if (!delegateWritable) {
+			return
 		}
 		parentObj[proxyMapName][propertyName] = setValue
 	}
 
+	delete descriptor.value
+	delete descriptor.writable
+
 	Object.defineProperty(parentObj, propertyName, descriptor)
 }
 
-export function defineProperties(obj, props) {
+export function defineProperties (obj, props) {
 	Object.keys(props).forEach(path => {
 		defineProperty(obj, path, props[path])
 	})
 }
 
-export function get(obj, path, defaultValue) {
+export function get (obj, path, defaultValue) {
 	if (typeof path === 'number') {
 		path = [path]
 	}
@@ -105,34 +122,28 @@ export function get(obj, path, defaultValue) {
 	return get(result, path.slice(1), defaultValue)
 }
 
-export function set(obj, path, value, doNotReplace) {
+export function set (obj, path, value, doNotReplace) {
 	if (typeof path === 'number') {
 		path = [path]
 	}
-	if (!path || path.length === 0) {
+	if (obj == null || !path || path.length === 0) {
 		return obj
-	}
-	if (obj == null) {
-		return defaultValue
 	}
 	if (typeof path === 'string') {
 		return set(obj, path.split('.'), value, doNotReplace)
 	}
 
 	let currentPath = path[0]
-	let currentValue = obj[currentPath]
 	if (path.length === 1) {
-		if (currentValue === undefined || !doNotReplace) {
+		if (!(currentPath in obj) || !doNotReplace) {
 			obj[currentPath] = value
 		}
-		return currentValue
+	} else {
+		if (!(currentPath in obj)) {
+			obj[currentPath] = typeof path[1] === 'number' ? [] : {}
+		}
+		set(obj[currentPath], path.slice(1), value, doNotReplace) 
 	}
-
-	if (currentValue === undefined) {
-		obj[currentPath] = typeof path[1] === 'number' ? [] : {}
-	} 
-
-	return set(currentValue, path.slice(1), value, doNotReplace)
 }
 
 export default { watchSet, watchInvoke, d, defineProperty, defineProperties, get, set }
