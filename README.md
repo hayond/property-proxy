@@ -9,11 +9,13 @@ Proxy and Monitor deep properties
 ```
 npm install property-proxy --save
 ```
+
 ## Method
 ```javascript
 var propertyProxy = require('property-proxy')
 var o = {}
 ```
+
 ### defineProperty (obj, path, descriptor)
 like Object.defineProperty, but can use path
 
