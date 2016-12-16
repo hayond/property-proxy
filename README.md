@@ -79,15 +79,14 @@ propertyProxy.get(o, 'a.b.d.l').push(8)
 
 ### get (obj, path, defaultValue)
 ```javascript
-propertyProxy.get(o, 'a.b.d.l')
-console.log(o.a.b.d.l.toString())
+console.log(propertyProxy.get(o, 'a.b.d.l').toString())
 // 1,2,3,4,5,6,7,8
 ```
 
 ### set (obj, path, value, doNotReplace)
 ```javascript
 propertyProxy.set(o, 'a.b.d.l', [6,6,6])
-console.log(o.a.b.d.l.toString())
+console.log(propertyProxy.get(o, 'a.b.d.l').toString())
 // 6,6,6
 ```
 

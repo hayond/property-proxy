@@ -9,4 +9,5 @@ node_modules/
 test/
 .gitignore
 gulpfile.js
+_config.yml
 
